@@ -70,6 +70,9 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <p>The test data are available here:</p>
 <p><a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv" class="uri">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv</a></p>
 <p>The data for this project come from this source: <a href="http://groupware.les.inf.puc-rio.br/har" class="uri">http://groupware.les.inf.puc-rio.br/har</a>. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment.</p>
+</div>
+<div id="analyse-data" class="section level2">
+<h2>Analyse data</h2>
 <pre class="r"><code>pml.training &lt;- read.csv(&quot;pml-training.csv&quot;, na.strings = c(&quot;NA&quot;, &quot;&quot;))
 pml.testing &lt;- read.csv(&quot;pml-testing.csv&quot;, na.strings = c(&quot;NA&quot;, &quot;&quot;))
 idx &lt;- grep(&quot;belt|arm|classe&quot;, names(pml.training))
@@ -94,7 +97,52 @@ training &lt;- activity[inTrain,]
 testing &lt;- activity[-inTrain,] 
 dim(training)</code></pre>
 <pre><code>## [1] 1964   40</code></pre>
-<pre class="r"><code>#modelFit &lt;- train(classe ~.,data=training, method=&quot;rf&quot;)</code></pre>
+<pre class="r"><code>modelFit &lt;- train(classe ~.,data=training, method=&quot;rf&quot;)</code></pre>
+<pre><code>## Loading required package: randomForest
+## randomForest 4.6-10
+## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre class="r"><code>predictions_testing &lt;- predict(modelFit,newdata=testing)
+confusionMatrix(predictions_testing,testing$classe)</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 4896  110    1   39   10
+##          B   77 3085  260    9   26
+##          C    8  177 2693  137   95
+##          D   22    8  102 2685   16
+##          E   19   37   23   24 3099
+## 
+## Overall Statistics
+##                                           
+##                Accuracy : 0.932           
+##                  95% CI : (0.9282, 0.9357)
+##     No Information Rate : 0.2844          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.914           
+##  Mcnemar's Test P-Value : 1.919e-14       
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity            0.9749   0.9028   0.8746   0.9278   0.9547
+## Specificity            0.9873   0.9739   0.9714   0.9900   0.9929
+## Pos Pred Value         0.9684   0.8924   0.8659   0.9478   0.9678
+## Neg Pred Value         0.9900   0.9766   0.9735   0.9859   0.9898
+## Prevalence             0.2844   0.1935   0.1744   0.1639   0.1838
+## Detection Rate         0.2773   0.1747   0.1525   0.1521   0.1755
+## Detection Prevalence   0.2863   0.1958   0.1761   0.1604   0.1813
+## Balanced Accuracy      0.9811   0.9384   0.9230   0.9589   0.9738</code></pre>
+<pre class="r"><code>pml.test &lt;- subset(pml.testing, select = names(training)[-40])
+predictions &lt;- predict(modelFit,newdata=pml.test)
+predictions</code></pre>
+<pre><code>##  [1] B A A A A E D B A A B C B A E E A B B B
+## Levels: A B C D E</code></pre>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>We can see sample error to be and estimate the error appropriately from confusionMatrix, we see that sensitivity and specificity is quite high, the result is good enough, and we also predict the classe of 20 pml.tesing, they are <code>predictions</code>.</p>
 </div>
 
 

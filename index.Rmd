@@ -21,8 +21,9 @@ https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
 
 The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment. 
 
+## Analyse data
 
-```{r}
+```{r cache=TRUE}
 pml.training <- read.csv("pml-training.csv", na.strings = c("NA", ""))
 pml.testing <- read.csv("pml-testing.csv", na.strings = c("NA", ""))
 idx <- grep("belt|arm|classe", names(pml.training))
@@ -44,6 +45,16 @@ training <- activity[inTrain,]
 testing <- activity[-inTrain,] 
 dim(training)
 
-#modelFit <- train(classe ~.,data=training, method="rf")
+modelFit <- train(classe ~.,data=training, method="rf")
+predictions_testing <- predict(modelFit,newdata=testing)
+confusionMatrix(predictions_testing,testing$classe)
+
+pml.test <- subset(pml.testing, select = names(training)[-40])
+predictions <- predict(modelFit,newdata=pml.test)
+predictions
 
 ```
+
+## Summary
+
+We can see sample error to be and estimate the error appropriately from confusionMatrix, we see that sensitivity and specificity is quite high, the result is good enough, and we also predict the classe of 20 pml.tesing, they are  `predictions`.
