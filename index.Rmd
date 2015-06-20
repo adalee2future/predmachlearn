@@ -40,7 +40,7 @@ need_col <- sapply(seq(1, dim(pml.training)[2]), not_to_much_NAs)
 activity <- pml.training[,need_col]
 
 library(caret)
-inTrain <- createDataPartition(y=activity$classe, p=0.1, list=FALSE)
+inTrain <- createDataPartition(y=activity$classe, p=0.2, list=FALSE)
 training <- activity[inTrain,] 
 testing <- activity[-inTrain,] 
 dim(training)
@@ -57,4 +57,4 @@ predictions
 
 ## Summary
 
-We can see sample error to be and estimate the error appropriately from confusionMatrix, we see that sensitivity and specificity is quite high, the result is good enough, and we also predict the classe of 20 pml.tesing, they are  `predictions`.
+We can see sample error to be and estimate the error appropriately from confusionMatrix, we see that sensitivity and specificity is quite high, the result is good enough, and we also predict the classe of 20 pml.tesing, they are  `r predictions`.
