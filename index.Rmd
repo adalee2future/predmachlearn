@@ -1,7 +1,49 @@
 ---
-title: "Untitled"
+title: "Human Activity and Healthy Analysis"
 author: "Ada Lee"
 date: "June 17, 2015"
 output: html_document
 ---
 
+## Background  
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset). 
+
+## Data
+
+The training data for this project are available here: 
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+The test data are available here: 
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment. 
+
+
+```{r}
+pml.training <- read.csv("pml-training.csv", na.strings = c("NA", ""))
+pml.testing <- read.csv("pml-testing.csv", na.strings = c("NA", ""))
+idx <- grep("belt|arm|classe", names(pml.training))
+pml.training <- pml.training[, idx]
+
+
+not_to_much_NAs <- function(col, dat = pml.training, threshold = .95){
+        col_dat <- dat[, col]
+        n <- dim(dat)[1]
+        unname( is.na(summary(col_dat)["NA's"]) | summary(col_dat)["NA's"]/ n < threshold )
+}
+
+need_col <- sapply(seq(1, dim(pml.training)[2]), not_to_much_NAs)
+activity <- pml.training[,need_col]
+
+library(caret)
+inTrain <- createDataPartition(y=activity$classe, p=0.1, list=FALSE)
+training <- activity[inTrain,] 
+testing <- activity[-inTrain,] 
+dim(training)
+
+#modelFit <- train(classe ~.,data=training, method="rf")
+
+```
