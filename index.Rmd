@@ -31,6 +31,7 @@ pml.training <- pml.training[, idx]
 
 
 not_to_much_NAs <- function(col, dat = pml.training, threshold = .95){
+        # if there are more than 95% of NAs, return false, else return true. (default threshold = .95)
         col_dat <- dat[, col]
         n <- dim(dat)[1]
         unname( is.na(summary(col_dat)["NA's"]) | summary(col_dat)["NA's"]/ n < threshold )
@@ -40,11 +41,12 @@ need_col <- sapply(seq(1, dim(pml.training)[2]), not_to_much_NAs)
 activity <- pml.training[,need_col]
 
 library(caret)
-inTrain <- createDataPartition(y=activity$classe, p=0.2, list=FALSE)
+inTrain <- createDataPartition(y=activity$classe, p=0.6, list=FALSE)
 training <- activity[inTrain,] 
 testing <- activity[-inTrain,] 
 dim(training)
 
+# cross validation
 modelFit <- train(classe ~.,data=training, method="rf")
 predictions_testing <- predict(modelFit,newdata=testing)
 confusionMatrix(predictions_testing,testing$classe)
