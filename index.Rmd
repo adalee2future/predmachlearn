@@ -41,7 +41,7 @@ need_col <- sapply(seq(1, dim(pml.training)[2]), not_to_much_NAs)
 activity <- pml.training[,need_col]
 
 library(caret)
-inTrain <- createDataPartition(y=activity$classe, p=0.6, list=FALSE)
+inTrain <- createDataPartition(y=activity$classe, p=0.2, list=FALSE)
 training <- activity[inTrain,] 
 testing <- activity[-inTrain,] 
 dim(training)
